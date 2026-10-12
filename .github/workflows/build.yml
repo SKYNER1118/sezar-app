@@ -1,25 +1,28 @@
-name: Build Android APK
-on: [push]
+name: Build Android Native Executable
+
+on:
+  push:
+    branches: [ "main", "master" ]
+
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Kodu Al
+      - name: Kodu Çek
         uses: actions/checkout@v4
-      
-      - name: Android NDK Kur
-        uses: nttld/setup-ndk@v3
-        id: setup-ndk
-        with:
-          ndk-version: r26b
-          add-to-path: true
 
-      - name: CMake ve Derleme Ortamı
-        uses: lukka/get-cmake@latest
-
-      - name: APK Derleme Dosyası Oluştur
+      - name: G++ Derleyicisini Kur
         run: |
-          mkdir build && cd build
-          cmake -DCMAKE_TOOLCHAIN_FILE=${{ steps.setup-ndk.outputs.ndk-path }}/build/cmake/android.toolchain.cmake \
-                -DANDROID_ABI=armeabi-v7a \
-                -DANDROID_PLATFORM=android-21 ..
+          sudo apt-get update
+          sudo apt-get install -y g++
+
+      - name: C++ Kodunu Derle
+        run: |
+          g++ -O2 main.cpp -o sezar_app -static-libstdc++
+
+      - name: Çıktıyı Dosya Olarak Kaydet
+        uses: actions/upload-artifact@v4
+        with:
+          name: Sezar-Uygulamasi
+          path: sezar_app
