@@ -1,0 +1,25 @@
+name: Build Android APK
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Kodu Al
+        uses: actions/checkout@v4
+      
+      - name: Android NDK Kur
+        uses: nttld/setup-ndk@v3
+        id: setup-ndk
+        with:
+          ndk-version: r26b
+          add-to-path: true
+
+      - name: CMake ve Derleme Ortamı
+        uses: lukka/get-cmake@latest
+
+      - name: APK Derleme Dosyası Oluştur
+        run: |
+          mkdir build && cd build
+          cmake -DCMAKE_TOOLCHAIN_FILE=${{ steps.setup-ndk.outputs.ndk-path }}/build/cmake/android.toolchain.cmake \
+                -DANDROID_ABI=armeabi-v7a \
+                -DANDROID_PLATFORM=android-21 ..
